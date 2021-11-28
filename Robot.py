@@ -149,4 +149,5 @@ class WAStartRobot(BestFirstSearchRobot):
 
     def _calc_node_priority(self, node):
         # TODO (Ex. 7.1): complete code here, delete exception
-        raise NotImplemented
+        return (1 - self.w) * node.g_value + self.w * self.heuristic
+        # raise NotImplemented
