@@ -109,9 +109,21 @@ class BestFirstSearchRobot(Robot):
                     return GraphSearchSolution(next_node, solve_time=curr_time() - start_time,
                                                n_node_expanded=n_node_expanded, init_heuristic_time=init_heuristic_time)
             ############################################################################################################
-            # TODO (EX. 5.1): complete code here, delete exception
-            raise NotImplemented
-
+            n_node_expanded = n_node_expanded + 1
+            for state, cost in maze_problem.expand_state(next_node.state):
+                new_node = Node(state, next_node, next_node.g_value + cost)
+                if not (self.open.__contains__(state) or self.close.__contains__(state)):
+                    self.open.add(new_node, self._calc_node_priority(new_node))
+                elif self.open.__contains__(state):
+                    curr_node = self.open.get_node(state)
+                    if self._calc_node_priority(new_node) < self._calc_node_priority(curr_node):
+                        self.open.remove_node(curr_node)
+                        self.open.add(new_node, self._calc_node_priority(new_node))
+                else:
+                    curr_node = self.close.get_node(state)
+                    if self._calc_node_priority(new_node) < self._calc_node_priority(curr_node):
+                        self.open.add(new_node, self._calc_node_priority(new_node))
+                        self.close.remove_node(curr_node)
             ############################################################################################################
 
         if compute_all_dists:
@@ -129,8 +141,7 @@ class UniformCostSearchRobot(BestFirstSearchRobot):
         self.name = "uniform cost search robot"
 
     def _calc_node_priority(self, node):
-        # TODO (Ex. 5.2): complete code here (just return the g value), delete exception
-        raise NotImplemented
+        return node.g_value
 
 class WAStartRobot(BestFirstSearchRobot):
     def __init__(self, heuristic, w=0.5, **h_params):
@@ -149,5 +160,5 @@ class WAStartRobot(BestFirstSearchRobot):
 
     def _calc_node_priority(self, node):
         # TODO (Ex. 7.1): complete code here, delete exception
-        return (1 - self.w) * node.g_value + self.w * self.heuristic
+        return (1 - self.w) * node.g_value + self.w * self.heuristic(node.state)
         # raise NotImplemented
