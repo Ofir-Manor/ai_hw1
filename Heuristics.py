@@ -28,14 +28,14 @@ class ShorterRobotHeuristic:
                                              f"{k} units because robot length has to at least 3"
         self.k = k
         ################################################################################################################
-        shorter_robot_head_goal, shorter_robot_tail_goal = self._compute_shorter_head_and_tails(maze_problem.initial_state.tail, maze_problem.initial_state.head)
-        shorter_robot_head_init, shorter_robot_tail_init = self._compute_shorter_head_and_tails(maze_problem.tail_goal, maze_problem.head_goal)
+        shorter_robot_head_goal, shorter_robot_tail_goal = self._compute_shorter_head_and_tails(maze_problem.initial_state.head, maze_problem.initial_state.tail)
+        shorter_robot_head_init, shorter_robot_tail_init = self._compute_shorter_head_and_tails(maze_problem.head_goal, maze_problem.tail_goal)
         self.new_maze_problem = MazeProblem(maze_map=maze_problem.maze_map,
-                                            initial_head=np.array(shorter_robot_head_init),
-                                            initial_tail=np.array(shorter_robot_tail_init),
-                                            head_goal=np.array(shorter_robot_head_goal),  # doesn't matter, don't change
-                                            tail_goal=np.array(shorter_robot_tail_goal))  # doesn't matter, don't change
-        self.node_dists = ...().solve(maze_problem=self.new_maze_problem, compute_all_dists=True)
+                                            initial_head=shorter_robot_head_init,
+                                            initial_tail=shorter_robot_tail_init,
+                                            head_goal=shorter_robot_head_goal,  # doesn't matter, don't change
+                                            tail_goal=shorter_robot_tail_goal)  # doesn't matter, don't change
+        self.node_dists = Robot.UniformCostSearchRobot().solve(maze_problem=self.new_maze_problem, compute_all_dists=True)
         ################################################################################################################
 
         assert isinstance(self.node_dists, NodesCollection)
@@ -43,25 +43,25 @@ class ShorterRobotHeuristic:
     def _compute_shorter_head_and_tails(self, head, tail):
         if (head[0] - tail[0]) == 0:
             if head[1] > tail[1]:
-                yield [head[0], int(head[1] - (self.k/2))]
-                yield [tail[0], int(tail[1] + (self.k/2))]
+                yield np.array([tail[0], int(tail[1] + (self.k / 2))])
+                yield np.array([head[0], int(head[1] - (self.k/2))])
             else:
-                yield [head[0], int(head[1] + (self.k / 2))]
-                yield [tail[0], int(tail[1] - (self.k / 2))]
+                yield np.array([tail[0], int(tail[1] - (self.k / 2))])
+                yield np.array([head[0], int(head[1] + (self.k / 2))])
         else:
             if head[0] > tail[0]:
-                yield [int(head[0] - (self.k/2)), head[1]]
-                yield [int(tail[0] + (self.k/2)), tail[1]]
+                yield np.array([int(tail[0] + (self.k / 2)), tail[1]])
+                yield np.array([int(head[0] - (self.k/2)), head[1]])
             else:
-                yield [int(head[0] + (self.k/2)), head[1]]
-                yield [int(tail[0] - (self.k/2)), tail[1]]
-        # raise NotImplemented
+                yield np.array([int(tail[0] - (self.k / 2)), tail[1]])
+                yield np.array([int(head[0] + (self.k/2)), head[1]])
 
     def __call__(self, state: MazeState):
-        shorter_head_location, shorter_tail_location = self._compute_shorter_head_and_tails(state.tail, state.head)
+        shorter_head_location, shorter_tail_location = self._compute_shorter_head_and_tails(state.head, state.tail)
         new_state = MazeState(self.new_maze_problem, head=shorter_head_location, tail=shorter_tail_location)
         if new_state in self.node_dists:
             node = self.node_dists.get_node(new_state)
             return node.g_value
         else:
-            return center_manhattan_heuristic(state)
+            return center_manhattan_heuristic(state) * 4  # I do not understand why I needed the times 4 to achieve the
+            # best result

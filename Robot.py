@@ -159,6 +159,4 @@ class WAStartRobot(BestFirstSearchRobot):
             self.heuristic = self.orig_heuristic(maze_problem, **self.h_params)
 
     def _calc_node_priority(self, node):
-        # TODO (Ex. 7.1): complete code here, delete exception
         return (1 - self.w) * node.g_value + self.w * self.heuristic(node.state)
-        # raise NotImplemented
