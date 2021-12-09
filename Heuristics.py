@@ -63,5 +63,5 @@ class ShorterRobotHeuristic:
             node = self.node_dists.get_node(new_state)
             return node.g_value
         else:
-            return center_manhattan_heuristic(state) * 4  # I do not understand why I needed the times 4 to achieve the
-            # best result
+            return float('inf')  # We are allowed to use the infinite value because we proved that states where
+            # the robot did not reach we will not be able to reach the goal

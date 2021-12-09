@@ -38,8 +38,12 @@ def shorter_robot_heuristic_experiment(maze_index):
     ks = list(range(2, length - 2, 2))
     for k in ks:
         ################################################################################################################
-        # TODO (EX. 16.3): complete code here, delete exception
-        raise NotImplemented
+        print(type(problem))
+        robot = WAStartRobot(shorter_robot_heuristic_experiment, k=k)
+        print(type(robot))
+        solution = robot.solve(problem)
+        print(type(solution))
+        # raise NotImplemented
 
         ################################################################################################################
 
