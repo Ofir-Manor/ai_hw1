@@ -11,8 +11,11 @@ def w_experiment(maze_index):
     problem = create_problem(f"maze_{maze_index}")
     for w in w_values:
         ################################################################################################################
-        # TODO (EX. 10.1): complete code here, delete exception
-        raise NotImplemented
+        algo = WAStartRobot(center_manhattan_heuristic, w)
+        graph_sol = algo.solve(problem)
+        solve_times.append(graph_sol.solve_time)
+        solution_costs.append(graph_sol.cost)
+        # raise NotImplemented
 
         ################################################################################################################
 
@@ -20,14 +23,14 @@ def w_experiment(maze_index):
     plt.xlabel("w")
     plt.ylabel("time")
     plt.title(f"wA* with center_manhattan_heuristic solving time on maze_{maze_index}")
-    plt.savefig(f"plots/wA* with center_manhattan_heuristic solving time on maze_{maze_index}.png")
+    plt.savefig(f"plots/wA with center_manhattan_heuristic solving time on maze_{maze_index}.png")
     plt.clf()
 
     plt.plot(w_values, solution_costs)
     plt.xlabel("w")
     plt.ylabel("cost")
     plt.title(f"wA* with center_manhattan_heuristic solution cost on maze_{maze_index}")
-    plt.savefig(f"plots/wA* with center_manhattan_heuristic solution cost on maze_{maze_index}.png")
+    plt.savefig(f"plots/wA with center_manhattan_heuristic solution cost on maze_{maze_index}.png")
     plt.clf()
 
 def shorter_robot_heuristic_experiment(maze_index):
@@ -38,12 +41,10 @@ def shorter_robot_heuristic_experiment(maze_index):
     ks = list(range(2, length - 2, 2))
     for k in ks:
         ################################################################################################################
-        print(type(problem))
-        robot = WAStartRobot(shorter_robot_heuristic_experiment, k=k)
-        print(type(robot))
+        robot = WAStartRobot(heuristic=ShorterRobotHeuristic, k=k)
         solution = robot.solve(problem)
-        print(type(solution))
-        # raise NotImplemented
+        solve_times.append(solution.solve_time)
+        heuristic_init_times.append(solution.init_heuristic_time)
 
         ################################################################################################################
 
