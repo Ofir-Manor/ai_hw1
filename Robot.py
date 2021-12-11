@@ -116,12 +116,12 @@ class BestFirstSearchRobot(Robot):
                     self.open.add(new_node, self._calc_node_priority(new_node))
                 elif self.open.__contains__(state):
                     curr_node = self.open.get_node(state)
-                    if self._calc_node_priority(new_node) < self._calc_node_priority(curr_node):
+                    if new_node.g_value < curr_node.g_value:
                         self.open.remove_node(curr_node)
                         self.open.add(new_node, self._calc_node_priority(new_node))
                 else:
                     curr_node = self.close.get_node(state)
-                    if self._calc_node_priority(new_node) < self._calc_node_priority(curr_node):
+                    if new_node.g_value < curr_node.g_value:
                         self.open.add(new_node, self._calc_node_priority(new_node))
                         self.close.remove_node(curr_node)
             ############################################################################################################
